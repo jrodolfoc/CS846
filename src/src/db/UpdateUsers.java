@@ -18,7 +18,8 @@ import org.eclipse.egit.github.core.service.UserService;
 public class UpdateUsers implements Runnable
 {
 	private final String UPD_USER_STR = "UPDATE gh_users SET url = ?, public_repos = ?, name = ?, company = ?, location = ?, followers = ?, following = ?, created_at = ? WHERE id = ? LIMIT 1";
-	private final String NXT_USER_STR = "SELECT id, login, type FROM gh_users WHERE followers IS NULL LIMIT 500";
+	private final String NXT_USER_STR = "SELECT id, login, type FROM gh_users WHERE followers IS NULL LIMIT ?";
+	private final String DEL_USER_STR = "DELETE FROM gh_users WHERE id = ? LIMIT 1";
 	private final DBConnector m_cons;
 
 	public UpdateUsers(DBConnector _m_cons)
@@ -36,7 +37,7 @@ public class UpdateUsers implements Runnable
 		try
 		{
 			Connection conn = this.m_cons.newConn();
-			ArrayList<User> users = this.getUsers(conn);
+			ArrayList<User> users = this.getUsers(conn, 500);
 			st = conn.prepareStatement(UPD_USER_STR);
 
 			do
@@ -62,7 +63,7 @@ public class UpdateUsers implements Runnable
 					st.executeUpdate();
 				}
 			
-				users = this.getUsers(conn);
+				users = this.getUsers(conn, 500);
 			}
 			while(users.size() > 0);
 		}
@@ -77,7 +78,7 @@ public class UpdateUsers implements Runnable
 		}
 	}
 	
-	private ArrayList<User> getUsers(Connection conn) throws SQLException
+	private ArrayList<User> getUsers(Connection conn, int limit) throws SQLException
 	{
 		ArrayList<User> rVal = new ArrayList<User>();
 		PreparedStatement st = null;
@@ -87,6 +88,7 @@ public class UpdateUsers implements Runnable
 		try
 		{
 			st = conn.prepareStatement(NXT_USER_STR);
+			st.setInt(1, limit);
 			rs = st.executeQuery();
 
 			while (rs.next())
@@ -112,14 +114,35 @@ public class UpdateUsers implements Runnable
 
 		return rVal;
 	}
-	
+
+	private void deleteUser(Connection conn)
+	{
+		PreparedStatement st = null;
+		
+		try
+		{
+			ArrayList<User> ar = getUsers(conn, 1);
+			st = conn.prepareStatement(DEL_USER_STR);
+			st.setInt(1, ar.get(0).getId());
+			st.executeUpdate();
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+		}
+		finally
+		{
+			try { if(st != null) st.close(); }
+			catch (SQLException e) { }
+		}
+	}
 
 	@Override
 	public void run()
 	{
-		boolean retry = true;
+		boolean retry = false;
 		
-		while(retry)
+		do
 		{
 			try
 			{
@@ -138,8 +161,18 @@ public class UpdateUsers implements Runnable
 				{
 					if(e instanceof RequestException)
 					{
-						TimeUnit.MINUTES.sleep(5L);
-						retry = true;
+						RequestException re = (RequestException) e;
+
+						if(re.getStatus() == 404)
+						{
+							deleteUser(this.m_cons.newConn());
+							retry = true;
+						}
+						else
+						{
+							TimeUnit.MINUTES.sleep(5L);
+							retry = true;
+						}
 					}
 					else
 						retry = false;
@@ -147,5 +180,6 @@ public class UpdateUsers implements Runnable
 				catch(Exception ec) { }
 			}
 		}
+		while(retry);
 	}
 }
