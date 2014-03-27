@@ -17,41 +17,25 @@ public class DBConnector
 	
 	private static String CWL_VARS = "SELECT var_int_value, var_str_value FROM cwl_vars WHERE description = ? LIMIT 1";
 	private static String UPD_CWL_VARS = "UPDATE cwl_vars SET var_int_value = ?, var_str_value = ? WHERE description = ? LIMIT 1";
-	private Connection _con;
 	private int AuthKeyNo = 0;
 
-	private void connect() throws SQLException
+	public Connection newConn() throws SQLException
 	{
-		this._con = null;
+		Connection _con = null;
 
 		try
 	    {
-			this._con = DriverManager.getConnection(DBHOST, DBUSER, DBPASS);
-			this._con.setAutoCommit(true);
+			_con = DriverManager.getConnection(DBHOST, DBUSER, DBPASS);
+			_con.setAutoCommit(true);
 	    }
         catch (SQLException ex)
 	    {
 	        System.out.println(ex.getMessage());
-	        this._con = null;
+	        _con = null;
 	        throw ex;
 	    }
-	}
-
-	public Connection getConn() throws SQLException
-	{
-		if(this._con == null)
-		{
-			try
-		    {
-				this.connect();
-		    }
-	        catch (SQLException ex)
-		    {
-	        	throw ex;
-		    }
-		}
 		
-		return this._con;
+		return _con;
 	}
 
 	public int CrawlerIntVar(String desc) throws SQLException
@@ -72,7 +56,7 @@ public class DBConnector
 
 		try
 		{
-			st = this.getConn().prepareStatement(CWL_VARS);
+			st = this.newConn().prepareStatement(CWL_VARS);
 			st.setString(1, desc);
 			rs = st.executeQuery();
 
@@ -114,7 +98,7 @@ public class DBConnector
 		
 		try
 		{
-			st = this.getConn().prepareStatement(UPD_CWL_VARS);
+			st = this.newConn().prepareStatement(UPD_CWL_VARS);
 			
 			if(val instanceof Integer)
 			{
@@ -141,7 +125,7 @@ public class DBConnector
 		}
 	}
 
-	public GitHubClient getGHClient() throws InterruptedException, SQLException
+	public synchronized GitHubClient getGHClient() throws InterruptedException, SQLException
 	{
 		GitHubClient client = new GitHubClient();
 		int i = this.AuthKeyNo++ % 3;
@@ -153,14 +137,10 @@ public class DBConnector
 			token = CrawlerStrVar("joseauth");
 			break;
 		case 1:
-			TimeUnit.MINUTES.sleep(10L);
-//			token = CrawlerStrVar("mdhrauth");
+			token = CrawlerStrVar("mdhrauth");
 			break;
 		case 2:
 			token = CrawlerStrVar("jsphauth");
-			break;
-		default:
-			TimeUnit.MINUTES.sleep(10L);
 			break;
 		}
 
