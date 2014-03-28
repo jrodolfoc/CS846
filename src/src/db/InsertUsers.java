@@ -16,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.egit.github.core.client.NoSuchPageException;
 import org.eclipse.egit.github.core.client.PageIterator;
+import org.eclipse.egit.github.core.client.RequestException;
 import org.eclipse.egit.github.core.service.UserService;
 import org.eclipse.egit.github.core.User;
 
@@ -106,7 +107,6 @@ public class InsertUsers implements Runnable
 		}
 		catch (SQLException ex)
 		{
-			System.out.println(ex.getMessage());
 	        throw ex;
 		}
 		finally
@@ -136,7 +136,6 @@ public class InsertUsers implements Runnable
 		}
 		catch (SQLException ex)
 		{
-			System.out.println(ex.getMessage());
 	        throw ex;
 		}
 		finally
@@ -151,10 +150,12 @@ public class InsertUsers implements Runnable
 	@Override
 	public void run()
 	{
-		boolean retry = true;
+		boolean retry = false;
 		
-		while(retry)
+		do
 		{
+			retry = false;
+
 			try
 			{
 				this.createUsers();
@@ -170,11 +171,32 @@ public class InsertUsers implements Runnable
 				
 				try
 				{
-					TimeUnit.MINUTES.sleep(10L);
-					retry = true;
+					if(e.getMessage().indexOf("API rate limit exceeded") > -1)
+						retry = true;
+					else if(e instanceof RequestException)
+					{
+						RequestException re = (RequestException) e;
+						int status = re.getStatus();
+
+						if(status >= 404)
+						{
+							TimeUnit.MINUTES.sleep(10L);
+							retry = true;
+						}
+					}
+					else if(e instanceof ConnectException)
+					{
+						TimeUnit.MINUTES.sleep(10L);
+						retry = true;
+					}
 				}
-				catch(Exception ec) { }
+				catch(Exception ec)
+				{
+					System.out.println("Deeeep catch*************************");
+					e.printStackTrace();
+				}
 			}
 		}
+		while(retry);
 	}
 }

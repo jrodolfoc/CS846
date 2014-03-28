@@ -70,7 +70,6 @@ public class UpdateUsers implements Runnable
 		}
 		catch (SQLException ex)
 		{
-			System.out.println(ex.getMessage());
 	        throw ex;
 		}
 		finally
@@ -104,7 +103,6 @@ public class UpdateUsers implements Runnable
 		}
 		catch (SQLException ex)
 		{
-			System.out.println(ex.getMessage());
 	        throw ex;
 		}
 		finally
@@ -116,7 +114,7 @@ public class UpdateUsers implements Runnable
 		return rVal;
 	}
 
-	private void deleteUser(Connection conn)
+	private void deleteUser(Connection conn) throws SQLException
 	{
 		PreparedStatement st = null;
 		
@@ -129,7 +127,7 @@ public class UpdateUsers implements Runnable
 		}
 		catch (SQLException e)
 		{
-			e.printStackTrace();
+			throw e;
 		}
 		finally
 		{
@@ -145,6 +143,8 @@ public class UpdateUsers implements Runnable
 		
 		do
 		{
+			retry = false;
+
 			try
 			{
 				this.completeUsers();
@@ -160,18 +160,21 @@ public class UpdateUsers implements Runnable
 				
 				try
 				{
-					if(e instanceof RequestException)
+					if(e.getMessage().indexOf("API rate limit exceeded") > -1)
+						retry = true;
+					else if(e instanceof RequestException)
 					{
 						RequestException re = (RequestException) e;
+						int status = re.getStatus();
 
-						if(re.getStatus() == 404)
+						if(status == 404)
 						{
 							this.deleteUser(this.m_cons.newConn());
 							retry = true;
 						}
-						else
+						else if(status > 404)
 						{
-							TimeUnit.MINUTES.sleep(5L);
+							TimeUnit.MINUTES.sleep(10L);
 							retry = true;
 						}
 					}
@@ -180,10 +183,12 @@ public class UpdateUsers implements Runnable
 						TimeUnit.MINUTES.sleep(10L);
 						retry = true;
 					}
-					else
-						retry = false;
 				}
-				catch(Exception ec) { }
+				catch(Exception ec)
+				{
+					System.out.println("Deeeep catch*************************");
+					e.printStackTrace();
+				}
 			}
 		}
 		while(retry);

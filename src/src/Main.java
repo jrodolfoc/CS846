@@ -15,7 +15,7 @@ public class Main
 	{
 		/*Thread tui;/**/
 		/*Thread tuu;/**/
-		Thread tri;
+		Thread tri;/**/
 		Thread tru;/**/
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
