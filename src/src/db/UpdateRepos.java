@@ -46,7 +46,7 @@ public class UpdateRepos implements Runnable
 		this.isMac = mac;
 	}
 
-	private void completeRepos() throws SQLException, InterruptedException, IOException, ConnectException
+	private void completeRepos() throws SQLException, InterruptedException, IOException
 	{
 		Date date;
 		PreparedStatement st = null;
