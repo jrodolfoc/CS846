@@ -180,7 +180,12 @@ public class UpdateUsers implements Runnable
 					}
 					else if(e instanceof ConnectException)
 					{
-						TimeUnit.MINUTES.sleep(10L);
+						TimeUnit.MINUTES.sleep(3L);
+						retry = true;
+					}
+					else if(e instanceof java.net.MalformedURLException)
+					{
+						this.deleteUser(this.m_cons.newConn());
 						retry = true;
 					}
 				}
