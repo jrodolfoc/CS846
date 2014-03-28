@@ -5,9 +5,7 @@ import java.sql.SQLException;
 import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -15,30 +13,30 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.egit.github.core.client.NoSuchPageException;
 import org.eclipse.egit.github.core.client.PageIterator;
-import org.eclipse.egit.github.core.service.UserService;
-import org.eclipse.egit.github.core.User;
+import org.eclipse.egit.github.core.service.RepositoryService;
+import org.eclipse.egit.github.core.Repository;
 
-public class InsertUsers implements Runnable
+public class InsertRepos implements Runnable
 {
-	private final String ADD_USER_STR = "INSERT INTO gh_users (id, login, type) VALUES (?, ?, ?)";
-	private final String EXT_USER_STR = "SELECT COUNT(*) as cnt FROM gh_users WHERE id = ?";
-	private final String MAX_USER_STR = "SELECT IFNULL(MAX(id), 0) as umax FROM gh_users";
+	private final String ADD_REPO_STR = "INSERT INTO gh_repositories (id, owner_id, name, description, fork, " +
+		"url, html_url) VALUES (?, ?, ?, ?, ?, ?, ?)";
+	private final String EXT_REPO_STR = "SELECT COUNT(*) as cnt FROM gh_repositories WHERE id = ?";
+	private final String MAX_REPO_STR = "SELECT IFNULL(MAX(id), 0) as umax FROM gh_repositories";
 	private final DBConnector m_cons;
 
-	public InsertUsers(DBConnector _m_cons)
+	public InsertRepos(DBConnector _m_cons)
 	{
 		this.m_cons = _m_cons;
 	}
 	
-	private void createUsers() throws SQLException, InterruptedException, NoSuchPageException
+	private void createRepos() throws SQLException, InterruptedException, NoSuchPageException
 	{
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		Map<String, String> map = new HashMap<String, String>();
-		PageIterator<User> iterator = null;
+		PageIterator<Repository> iterator = null;
 		PreparedStatement st = null;
-		List<User> users;
+		List<Repository> repos;
 
-		UserService uservice;
+		RepositoryService uservice;
 		int maxUser;
 		Date date;
 
@@ -46,31 +44,40 @@ public class InsertUsers implements Runnable
 		{
 			Connection con = this.m_cons.newConn();
 			maxUser = MaxUser(con);
-			map.put("since", "" + maxUser);
-			st = con.prepareStatement(ADD_USER_STR);
+			st = con.prepareStatement(ADD_REPO_STR);
 
-			uservice = new UserService(this.m_cons.getGHClient());
-			iterator = uservice.pageUsers(map);
+			uservice = new RepositoryService(this.m_cons.getGHClient());
+			iterator = uservice.pageAllRepositories(maxUser);
 
 			while (iterator.hasNext())
 			{
 				date = new Date();
-				users = new ArrayList<User>();
-				users.addAll(iterator.next());
+				repos = new ArrayList<Repository>();
+				repos.addAll(iterator.next());
 				
-				System.out.print(users.size() + " users to insert ");
-				System.out.print("[" + users.get(0).getId() + " - " + users.get(users.size() - 1).getId() + "]");
+				System.out.print(repos.size() + " repos to insert ");
+				System.out.print("[" + repos.get(0).getId() + " - " + repos.get(repos.size() - 1).getId() + "]");
 				System.out.println(" on " + dateFormat.format(date));
 
-				for(User u2 : users)
+				for(Repository u2 : repos)
 				{
-					if(this.UserExists(con, u2.getId()))
+					if(this.RepoExists(con, u2.getId()))
 						continue;
 					else
 					{
-						st.setInt(1, u2.getId());
-						st.setString(2, u2.getLogin());
-						st.setString(3, u2.getType());
+						st.setLong(1, u2.getId());
+
+						if(u2.getOwner() != null)
+							st.setInt(2, u2.getOwner().getId());
+						else
+							st.setNull(2, java.sql.Types.INTEGER);
+
+						st.setString(3, u2.getName());
+						st.setString(4, u2.getDescription() == null ? null :
+							(u2.getDescription().length() > 511 ? u2.getDescription().substring(0, 511) : u2.getDescription()));
+						st.setInt(5, u2.isFork() ? 1 : 0);
+						st.setString(6, u2.getUrl());
+						st.setString(7, u2.getHtmlUrl());
 						st.executeUpdate();
 					}
 				}
@@ -86,15 +93,15 @@ public class InsertUsers implements Runnable
 		}
 	}
 
-	private boolean UserExists(Connection conn, int id) throws SQLException
+	private boolean RepoExists(Connection conn, long id) throws SQLException
 	{
 		PreparedStatement st = null;
 		ResultSet rs = null;
 
 		try
 		{
-			st = conn.prepareStatement(EXT_USER_STR);
-			st.setInt(1, id);
+			st = conn.prepareStatement(EXT_REPO_STR);
+			st.setLong(1, id);
 			rs = st.executeQuery();
 
 			while (rs.next())
@@ -125,7 +132,7 @@ public class InsertUsers implements Runnable
 
 		try
 		{
-			st = conn.prepareStatement(MAX_USER_STR);
+			st = conn.prepareStatement(MAX_REPO_STR);
 			rs = st.executeQuery();
 
 			while (rs.next())
@@ -156,7 +163,7 @@ public class InsertUsers implements Runnable
 		{
 			try
 			{
-				this.createUsers();
+				this.createRepos();
 			}
 			catch (SQLException | InterruptedException e)
 			{
@@ -169,7 +176,7 @@ public class InsertUsers implements Runnable
 				
 				try
 				{
-					TimeUnit.MINUTES.sleep(5L);
+					TimeUnit.MINUTES.sleep(1L);
 					retry = true;
 				}
 				catch(Exception ec) { }

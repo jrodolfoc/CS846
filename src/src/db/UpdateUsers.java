@@ -165,7 +165,7 @@ public class UpdateUsers implements Runnable
 
 						if(re.getStatus() == 404)
 						{
-							deleteUser(this.m_cons.newConn());
+							this.deleteUser(this.m_cons.newConn());
 							retry = true;
 						}
 						else

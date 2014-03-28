@@ -7,3 +7,4 @@
 .classpath
 .project
 *.mwb.bak
+bin/

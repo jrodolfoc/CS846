@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
-import java.util.concurrent.TimeUnit;
 
 import org.eclipse.egit.github.core.client.GitHubClient;
 

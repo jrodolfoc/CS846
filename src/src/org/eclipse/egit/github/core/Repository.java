@@ -82,6 +82,20 @@ public class Repository implements IRepositoryIdProvider, Serializable {
 
 	private User owner;
 
+	private int stargazersCount;
+
+	private int watchersCount;
+
+	private int forksCount;
+
+	private int openIssuesCount;
+	
+	private int networkCount;
+	
+	private int subscribersCount;
+	
+	private String classification;
+	
 	/**
 	 * @return fork
 	 */
@@ -530,6 +544,83 @@ public class Repository implements IRepositoryIdProvider, Serializable {
 		return this;
 	}
 
+	public Repository setStargazersCount(int x)
+	{
+		stargazersCount = x;
+		return this;
+	}
+
+	public int getStargazersCount()
+	{
+		return stargazersCount;
+	}
+
+	public Repository setWatchersCount(int x)
+	{
+		watchersCount = x;
+		return this;
+	}
+	
+	public int getWatchersCount()
+	{
+		return watchersCount;
+	}
+
+	public Repository setForksCount(int x)
+	{
+		forksCount = x;
+		return this;
+	}
+	
+	public int getForksCount()
+	{
+		return forksCount;
+	}
+
+	public Repository setOpenIssuesCount(int x)
+	{
+		openIssuesCount = x;
+		return this;
+	}
+	
+	public int getOpenIssuesCount()
+	{
+		return openIssuesCount;
+	}
+	
+	public Repository setNetworkCount(int x)
+	{
+		networkCount = x;
+		return this;
+	}
+	
+	public int getNetworkCount()
+	{
+		return networkCount;
+	}
+	
+	public Repository setSubscribersCount(int x)
+	{
+		subscribersCount = x;
+		return this;
+	}
+	
+	public int getSubscribersCount()
+	{
+		return subscribersCount;
+	}
+	
+	public Repository setClassification(String x)
+	{
+		classification = x;
+		return this;
+	}
+	
+	public String getClassification()
+	{
+		return classification;
+	}
+	
 	/**
 	 * Generate id for this repository
 	 *
