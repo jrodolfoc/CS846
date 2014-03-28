@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.ResultSet;
 import java.sql.PreparedStatement;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.egit.github.core.client.GitHubClient;
 
@@ -127,21 +128,28 @@ public class DBConnector
 	public synchronized GitHubClient getGHClient(Connection conn) throws InterruptedException, SQLException
 	{
 		GitHubClient client = new GitHubClient();
-		int i = this.AuthKeyNo++ % 3;
+		int i = this.AuthKeyNo++ % 4;
 		String token = "";
 
-		switch(i)
+		try
 		{
-		case 0:
-			token = CrawlerStrVar(conn, "joseauth");
-			break;
-		case 1:
-			token = CrawlerStrVar(conn, "mdhrauth");
-			break;
-		case 2:
-			token = CrawlerStrVar(conn, "jsphauth");
-			break;
+			switch(i)
+			{
+			case 0:
+				token = CrawlerStrVar(conn, "joseauth");
+				break;
+			case 1:
+				token = CrawlerStrVar(conn, "mdhrauth");
+				break;
+			case 2:
+				token = CrawlerStrVar(conn, "jsphauth");
+				break;
+			case 3:
+				TimeUnit.MINUTES.sleep(10L);
+				break;
+			}
 		}
+		catch(Exception ec) { }
 
 		client.setOAuth2Token(token);
 		return client;

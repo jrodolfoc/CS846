@@ -92,7 +92,6 @@ public class UpdateRepos implements Runnable
 		}
 		catch (SQLException ex)
 		{
-			System.out.println(ex.getMessage());
 	        throw ex;
 		}
 		finally
@@ -120,7 +119,6 @@ public class UpdateRepos implements Runnable
 		}
 		catch (SQLException ex)
 		{
-			System.out.println(ex.getMessage());
 	        throw ex;
 		}
 		finally
@@ -152,7 +150,6 @@ public class UpdateRepos implements Runnable
 		}
 		catch (SQLException ex)
 		{
-			System.out.println(ex.getMessage());
 	        throw ex;
 		}
 		finally
@@ -274,7 +271,7 @@ public class UpdateRepos implements Runnable
 		return new String[] { id, split[1], split[2] };
 	}
 
-	private void deleteRepo(Connection conn)
+	private void deleteRepo(Connection conn) throws SQLException
 	{
 		PreparedStatement st = null;
 		
@@ -287,7 +284,7 @@ public class UpdateRepos implements Runnable
 		}
 		catch (SQLException e)
 		{
-			e.printStackTrace();
+			throw e;
 		}
 		finally
 		{
@@ -303,6 +300,8 @@ public class UpdateRepos implements Runnable
 		
 		do
 		{
+			retry = false;
+
 			try
 			{
 				if(this.justUpdating)
@@ -318,22 +317,24 @@ public class UpdateRepos implements Runnable
 			catch(IOException e)
 			{
 				e.printStackTrace();
-				
+
 				try
 				{
-					if(e instanceof RequestException)
+					if(e.getMessage().indexOf("API rate limit exceeded") > -1)
+						retry = true;
+					else if(e instanceof RequestException)
 					{
 						RequestException re = (RequestException) e;
 						int status = re.getStatus();
 
-						if(status == 403 || status == 404)
+						if(status == 404)
 						{
 							this.deleteRepo(this.m_cons.newConn());
 							retry = true;
 						}
-						else
+						else if(status > 404)
 						{
-							TimeUnit.MINUTES.sleep(5L);
+							TimeUnit.MINUTES.sleep(10L);
 							retry = true;
 						}
 					}
@@ -342,10 +343,12 @@ public class UpdateRepos implements Runnable
 						TimeUnit.MINUTES.sleep(10L);
 						retry = true;
 					}
-					else
-						retry = false;
 				}
-				catch(Exception ec) { }
+				catch(Exception ec)
+				{
+					System.out.println("Deeeep catch*************************");
+					e.printStackTrace();
+				}
 			}
 		}
 		while(retry);
