@@ -162,6 +162,11 @@ public class UpdateUsers implements Runnable
 				{
 					if(e.getMessage().indexOf("API rate limit exceeded") > -1)
 						retry = true;
+					else if(e.getMessage().indexOf("Repository access blocked") > -1 || e instanceof java.net.MalformedURLException)
+					{
+						this.deleteUser(this.m_cons.newConn());
+						retry = true;
+					}
 					else if(e instanceof RequestException)
 					{
 						RequestException re = (RequestException) e;
@@ -181,11 +186,6 @@ public class UpdateUsers implements Runnable
 					else if(e instanceof ConnectException)
 					{
 						TimeUnit.MINUTES.sleep(3L);
-						retry = true;
-					}
-					else if(e.getMessage().indexOf("Repository access blocked") > -1 || e instanceof java.net.MalformedURLException)
-					{
-						this.deleteUser(this.m_cons.newConn());
 						retry = true;
 					}
 				}
