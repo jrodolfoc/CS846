@@ -27,6 +27,11 @@ import static org.eclipse.egit.github.core.client.IGitHubConstants.SEGMENT_TAGS;
 import static org.eclipse.egit.github.core.client.IGitHubConstants.SEGMENT_TEST;
 import static org.eclipse.egit.github.core.client.IGitHubConstants.SEGMENT_USER;
 import static org.eclipse.egit.github.core.client.IGitHubConstants.SEGMENT_USERS;
+
+import static org.eclipse.egit.github.core.client.IGitHubConstants.SEGMENT_STARGAZERS;
+import static org.eclipse.egit.github.core.client.IGitHubConstants.SEGMENT_COLLABORATORS;
+import static org.eclipse.egit.github.core.client.IGitHubConstants.SEGMENT_SUBSCRIBERS;
+
 import static org.eclipse.egit.github.core.client.PagedRequest.PAGE_FIRST;
 import static org.eclipse.egit.github.core.client.PagedRequest.PAGE_SIZE;
 
@@ -968,5 +973,79 @@ public class RepositoryService extends GitHubService {
 		uri.append('/').append(hookId);
 		uri.append(SEGMENT_TEST);
 		client.post(uri.toString());
+	}
+
+	
+	
+	
+	
+	
+	/**
+	 * Get stargazed to repository
+	 *
+	 * @param repository
+	 * @param includeAnonymous
+	 * @return list of contributors
+	 * @throws IOException
+	 */
+	public List<Contributor> getStargazers(IRepositoryIdProvider repository,
+			boolean includeAnonymous) throws IOException {
+		String id = getId(repository);
+		StringBuilder uri = new StringBuilder(SEGMENT_REPOS);
+		uri.append('/').append(id);
+		uri.append(SEGMENT_STARGAZERS);
+		PagedRequest<Contributor> request = createPagedRequest();
+		request.setUri(uri);
+		if (includeAnonymous)
+			request.setParams(Collections.singletonMap("anon", "1")); //$NON-NLS-1$ //$NON-NLS-2$
+		request.setType(new TypeToken<List<Contributor>>() {
+		}.getType());
+		return getAll(request);
+	}
+
+	/**
+	 * Get collaborators to repository
+	 *
+	 * @param repository
+	 * @param includeAnonymous
+	 * @return list of contributors
+	 * @throws IOException
+	 */
+	public List<Contributor> getCollaborators(IRepositoryIdProvider repository,
+			boolean includeAnonymous) throws IOException {
+		String id = getId(repository);
+		StringBuilder uri = new StringBuilder(SEGMENT_REPOS);
+		uri.append('/').append(id);
+		uri.append(SEGMENT_COLLABORATORS);
+		PagedRequest<Contributor> request = createPagedRequest();
+		request.setUri(uri);
+		if (includeAnonymous)
+			request.setParams(Collections.singletonMap("anon", "1")); //$NON-NLS-1$ //$NON-NLS-2$
+		request.setType(new TypeToken<List<Contributor>>() {
+		}.getType());
+		return getAll(request);
+	}
+
+	/**
+	 * Get subscribers to repository
+	 *
+	 * @param repository
+	 * @param includeAnonymous
+	 * @return list of contributors
+	 * @throws IOException
+	 */
+	public List<Contributor> getSubscribers(IRepositoryIdProvider repository,
+			boolean includeAnonymous) throws IOException {
+		String id = getId(repository);
+		StringBuilder uri = new StringBuilder(SEGMENT_REPOS);
+		uri.append('/').append(id);
+		uri.append(SEGMENT_SUBSCRIBERS);
+		PagedRequest<Contributor> request = createPagedRequest();
+		request.setUri(uri);
+		if (includeAnonymous)
+			request.setParams(Collections.singletonMap("anon", "1")); //$NON-NLS-1$ //$NON-NLS-2$
+		request.setType(new TypeToken<List<Contributor>>() {
+		}.getType());
+		return getAll(request);
 	}
 }

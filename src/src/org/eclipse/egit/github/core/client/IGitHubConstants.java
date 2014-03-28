@@ -191,4 +191,8 @@ public interface IGitHubConstants {
 
 	/** */
 	String URL_API = PROTOCOL_HTTPS + "://" + HOST_API; //$NON-NLS-1$
+
+	/********************/
+	String SEGMENT_STARGAZERS = "/stargazers"; //$NON-NLS-1$
+	String SEGMENT_SUBSCRIBERS = "/subscribers"; //$NON-NLS-1$
 }

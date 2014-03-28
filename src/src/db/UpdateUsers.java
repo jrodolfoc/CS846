@@ -1,6 +1,7 @@
 package db;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,7 +32,6 @@ public class UpdateUsers implements Runnable
 	{
 		Date date;
 		PreparedStatement st = null;
-		UserService uservice = new UserService(this.m_cons.getGHClient());
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		
 		try
@@ -39,6 +39,7 @@ public class UpdateUsers implements Runnable
 			Connection conn = this.m_cons.newConn();
 			ArrayList<User> users = this.getUsers(conn, 500);
 			st = conn.prepareStatement(UPD_USER_STR);
+			UserService uservice = new UserService(this.m_cons.getGHClient(conn));
 
 			do
 			{
@@ -173,6 +174,11 @@ public class UpdateUsers implements Runnable
 							TimeUnit.MINUTES.sleep(5L);
 							retry = true;
 						}
+					}
+					else if(e instanceof ConnectException)
+					{
+						TimeUnit.MINUTES.sleep(10L);
+						retry = true;
 					}
 					else
 						retry = false;
