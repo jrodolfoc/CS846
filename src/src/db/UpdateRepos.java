@@ -343,7 +343,7 @@ public class UpdateRepos implements Runnable
 						TimeUnit.MINUTES.sleep(3L);
 						retry = true;
 					}
-					else if(e instanceof java.net.MalformedURLException)
+					else if(e.getMessage().indexOf("Repository access blocked") > -1 || e instanceof java.net.MalformedURLException)
 					{
 						this.deleteRepo(this.m_cons.newConn());
 						retry = true;

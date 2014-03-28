@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 import db.DBConnector;
-import db.InsertRepos;
+//import db.InsertRepos;
 import db.UpdateRepos;
 //import db.InsertUsers;
 //import db.UpdateUsers;
@@ -15,7 +15,7 @@ public class Main
 	{
 		/*Thread tui;/**/
 		/*Thread tuu;/**/
-		Thread tri;/**/
+		/*Thread tri;/**/
 		Thread tru;/**/
 
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -30,8 +30,8 @@ public class Main
 //			tuu = new Thread(new UpdateUsers(dbc));
 //			tuu.start();
 
-			tri = new Thread(new InsertRepos(dbc));
-			tri.start();
+//			tri = new Thread(new InsertRepos(dbc));
+//			tri.start();
 			
 			tru = new Thread(new UpdateRepos(dbc, true, true));
 			tru.start();
@@ -39,7 +39,7 @@ public class Main
 			while (
 //					tui.isAlive() ||
 //					tuu.isAlive() ||
-					tri.isAlive() ||
+//					tri.isAlive() ||
 					tru.isAlive()
 					)
 			{
