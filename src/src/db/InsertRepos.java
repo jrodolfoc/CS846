@@ -194,7 +194,7 @@ public class InsertRepos implements Runnable
 					}
 					else if(e instanceof ConnectException)
 					{
-						TimeUnit.MINUTES.sleep(10L);
+						TimeUnit.MINUTES.sleep(3L);
 						retry = true;
 					}
 				}
