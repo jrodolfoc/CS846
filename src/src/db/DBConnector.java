@@ -37,17 +37,17 @@ public class DBConnector
 		return _con;
 	}
 
-	public int CrawlerIntVar(String desc) throws SQLException
+	public long CrawlerIntVar(Connection conn, String desc) throws SQLException
 	{
-		return (int) CrawlerVar(desc, true);
+		return (long) CrawlerVar(conn, desc, true);
 	}
 	
-	public String CrawlerStrVar(String desc) throws SQLException
+	public String CrawlerStrVar(Connection conn, String desc) throws SQLException
 	{
-		return (String) CrawlerVar(desc, false);
+		return (String) CrawlerVar(conn, desc, false);
 	}
 
-	private Object CrawlerVar(String desc, boolean isInt) throws SQLException
+	private Object CrawlerVar(Connection conn, String desc, boolean isInt) throws SQLException
 	{
 		PreparedStatement st = null;
 		ResultSet rs = null;
@@ -55,14 +55,14 @@ public class DBConnector
 
 		try
 		{
-			st = this.newConn().prepareStatement(CWL_VARS);
+			st = conn.prepareStatement(CWL_VARS);
 			st.setString(1, desc);
 			rs = st.executeQuery();
 
 			while (rs.next())
 			{
 				if(isInt)
-					rVal = rs.getInt("var_int_value");
+					rVal = rs.getLong("var_int_value");
 				else
 					rVal = rs.getString("var_str_value");
 			}
@@ -81,27 +81,27 @@ public class DBConnector
 		return rVal;
 	}
 
-	public void UpdateCrawlerIntVar(String desc, int val) throws SQLException
+	public void UpdateCrawlerIntVar(Connection conn, String desc, long val) throws SQLException
 	{
-		this.UpdateCrawlerVar(desc, val);
+		this.UpdateCrawlerVar(conn, desc, val);
 	}
 
-	public void UpdateCrawlerStrVar(String desc, String val) throws SQLException
+	public void UpdateCrawlerStrVar(Connection conn, String desc, String val) throws SQLException
 	{
-		this.UpdateCrawlerVar(desc, val);
+		this.UpdateCrawlerVar(conn, desc, val);
 	}
 
-	private void UpdateCrawlerVar(String desc, Object val) throws SQLException
+	private void UpdateCrawlerVar(Connection conn, String desc, Object val) throws SQLException
 	{
 		PreparedStatement st = null;
 		
 		try
 		{
-			st = this.newConn().prepareStatement(UPD_CWL_VARS);
+			st = conn.prepareStatement(UPD_CWL_VARS);
 			
 			if(val instanceof Integer)
 			{
-				st.setInt(1, (int) val);
+				st.setLong(1, (long) val);
 				st.setNull(2, java.sql.Types.CHAR);
 			}
 			else
@@ -124,7 +124,7 @@ public class DBConnector
 		}
 	}
 
-	public synchronized GitHubClient getGHClient() throws InterruptedException, SQLException
+	public synchronized GitHubClient getGHClient(Connection conn) throws InterruptedException, SQLException
 	{
 		GitHubClient client = new GitHubClient();
 		int i = this.AuthKeyNo++ % 3;
@@ -133,13 +133,13 @@ public class DBConnector
 		switch(i)
 		{
 		case 0:
-			token = CrawlerStrVar("joseauth");
+			token = CrawlerStrVar(conn, "joseauth");
 			break;
 		case 1:
-			token = CrawlerStrVar("mdhrauth");
+			token = CrawlerStrVar(conn, "mdhrauth");
 			break;
 		case 2:
-			token = CrawlerStrVar("jsphauth");
+			token = CrawlerStrVar(conn, "jsphauth");
 			break;
 		}
 

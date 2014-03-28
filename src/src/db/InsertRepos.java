@@ -1,5 +1,6 @@
 package db;
 
+import java.net.ConnectException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
@@ -29,7 +30,7 @@ public class InsertRepos implements Runnable
 		this.m_cons = _m_cons;
 	}
 	
-	private void createRepos() throws SQLException, InterruptedException, NoSuchPageException
+	private void createRepos() throws SQLException, InterruptedException, NoSuchPageException, ConnectException
 	{
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		PageIterator<Repository> iterator = null;
@@ -46,7 +47,7 @@ public class InsertRepos implements Runnable
 			maxUser = MaxUser(con);
 			st = con.prepareStatement(ADD_REPO_STR);
 
-			uservice = new RepositoryService(this.m_cons.getGHClient());
+			uservice = new RepositoryService(this.m_cons.getGHClient(con));
 			iterator = uservice.pageAllRepositories(maxUser);
 
 			while (iterator.hasNext())
@@ -170,13 +171,13 @@ public class InsertRepos implements Runnable
 				e.printStackTrace();
 				retry = false;
 			}
-			catch(NoSuchPageException e)
+			catch(ConnectException | NoSuchPageException e)
 			{
 				e.printStackTrace();
 				
 				try
 				{
-					TimeUnit.MINUTES.sleep(1L);
+					TimeUnit.MINUTES.sleep(10L);
 					retry = true;
 				}
 				catch(Exception ec) { }

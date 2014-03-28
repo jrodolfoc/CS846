@@ -1,5 +1,6 @@
 package db;
 
+import java.net.ConnectException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.PreparedStatement;
@@ -30,7 +31,7 @@ public class InsertUsers implements Runnable
 		this.m_cons = _m_cons;
 	}
 	
-	private void createUsers() throws SQLException, InterruptedException, NoSuchPageException
+	private void createUsers() throws SQLException, InterruptedException, NoSuchPageException, ConnectException
 	{
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Map<String, String> map = new HashMap<String, String>();
@@ -49,7 +50,7 @@ public class InsertUsers implements Runnable
 			map.put("since", "" + maxUser);
 			st = con.prepareStatement(ADD_USER_STR);
 
-			uservice = new UserService(this.m_cons.getGHClient());
+			uservice = new UserService(this.m_cons.getGHClient(con));
 			iterator = uservice.pageUsers(map);
 
 			while (iterator.hasNext())
@@ -163,13 +164,13 @@ public class InsertUsers implements Runnable
 				e.printStackTrace();
 				retry = false;
 			}
-			catch(NoSuchPageException e)
+			catch(NoSuchPageException | ConnectException e)
 			{
 				e.printStackTrace();
 				
 				try
 				{
-					TimeUnit.MINUTES.sleep(5L);
+					TimeUnit.MINUTES.sleep(10L);
 					retry = true;
 				}
 				catch(Exception ec) { }
