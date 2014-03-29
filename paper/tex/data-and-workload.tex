@@ -1,0 +1,38 @@
+\section{Data and Queries}
+
+We make use of LinkBench for generating our graph.  The probability of a node
+having some number of edges follows a Zipfian distribution. This means that the
+probability of a node having some degree decreases exponentially as the degree
+increases.
+
+% read only
+% reads of nodes are Zipfian
+We re-use their application to generate our workloads. The workloads
+that LinkBench see are after cache. As a result, we attempt to approach a
+pre-cache workload by adjusting the parameters to LinkBench's distributions.
+Second, we assume a read only workload, because TAO and LinkBench observed
+primarily reads. This allows us to focus on cache optimizations. The focus of
+this paper is not cache invalidation and isolation. The probability of a user
+being read some number of times also follows a Zipfian distribution. What this
+means is that the probability of a node being read some number of times
+decrease exponentially with respect to the number of reads.
+
+% 2-hop query
+% random walk queries
+% return all nodes
+Since photos, status updates, and people are nodes in the graph, queries requesting
+all of the photos that a person's friends posted become two hop. One hop to
+determine the person's friends, and a second hop to determine their friends' photos.
+As a result, we modify the LinkBench workload generator to perform 2-hop queries.
+LinkBench only generates 0-hop queries like: getting a node, getting the edges of a
+node, and getting an edge. Additionally, we include random walk queries that
+represent a user following edges starting from their starting node.
+
+% Result limit
+% no history
+LinkBench limits the number of nodes returned based on their timestamp. The
+reason is that a person would be interested in the most recent events. Since
+less than 3\% of queries returned more than 100 vertices, we limit the number of
+vertices returned to 100. Secondly, after retrieving the initial vertices, the
+probability of reading historically for old vertices was 0.96\%. We removed
+these from our workload because a small amount of queries asked for it.
