@@ -128,7 +128,7 @@ public class DBConnector
 	public synchronized GitHubClient getGHClient(Connection conn) throws InterruptedException, SQLException
 	{
 		GitHubClient client = new GitHubClient();
-		int i = this.AuthKeyNo++ % 4;
+		int i = this.AuthKeyNo++ % 10;
 		String token = "";
 
 		try
@@ -145,6 +145,24 @@ public class DBConnector
 				token = CrawlerStrVar(conn, "jsphauth");
 				break;
 			case 3:
+				token = CrawlerStrVar(conn, "desiauth");
+				break;
+			case 4:
+				token = CrawlerStrVar(conn, "ubu1auth");
+				break;
+			case 5:
+				token = CrawlerStrVar(conn, "ubu2auth");
+				break;
+			case 6:
+				token = CrawlerStrVar(conn, "ubu3auth");
+				break;
+			case 7:
+				token = CrawlerStrVar(conn, "ubu7auth");
+				break;
+			case 8:
+				token = CrawlerStrVar(conn, "ubu8auth");
+				break;
+			case 9:
 				TimeUnit.MINUTES.sleep(10L);
 				break;
 			}
