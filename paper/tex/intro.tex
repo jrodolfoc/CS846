@@ -1,55 +1,5 @@
 
 \section{Introduction}
 
-Storing, managing and analyzing large graphs is critical to a variety of applications.
-These can vary from biological networks and DNA sequencing to communication
-and social networks~\cite{Mondal12}~\cite{Yang12}. As the size of these graphs
-continue to grow, databases need to partition data and distribute load in order to
-improve response times and throughput. As noted by SPAR~\cite{Pujol12}, this
-problem becomes especially challenging with social networks, as the highly
-skewed nature of the data can cause load imbalance across different partitions.
-
-We wish to explore different caching algorithms as a form of replication that adapts
-to changing workloads. We also wish to exploit the underlying structure of the data
-and come up with better and smarter ways to replicate graph databases. This will yield
-different result from SPAR~\cite{Pujol12} and TAO~\cite{Bronson13}, since we will be
-able to answer k-hop queries. We also note that, unlike Pregel~\cite{Malewicz10}
-based systems, we believe cache can also work under OLTP workloads.
-
-Because of the challenges that social networks pose, we focused our evaluations on
-them. We used Facebook's LinkBench \cite{Armstrong13}, a database benchmark
-used internally on Facebook and released recently as an open source project, as a
-data and workload generator. LinkBench reveals that Facebook's data is represented
-as a graph where nodes are people, status updates, photos, etc. The edges are
-relationships to those objects like posting, liking, sharing or friendship relationships,
-to name a few. They also report that all their queries can be evaluated in one hop.
-There are only two ways this is possible given the structure of their graph.
-
-The first method involves the creation of edges for all two hop relationships. For
-example, a person has an edge to all her friends' photos, thus obtaining all her
-friends' photos in a single hop. This does not scale for people who have large
-degree, a common scenario under power law graphs like social networks. When
-a person with large degree posts a photo, an edge will have to be formed for each
-friend or follower of the person to the photo.
-
-The second method is to determine a person's friends' photos in two phases. One
-call determines all of a person's friends. In the second phase a batch of calls
-are made for the person's friends' photos. This is bad for the calling
-application layer because it needs to make two round trips to the persistent
-storage layer. Additionally, the second round trip is a batch of parallel calls.
-
-As a result of the limitations of the two above methods, we propose not limiting
-an online social network to 1-hop queries, and allow k-hop queries. To take
-advantage of the read heavy workload, Zipfian distribution on node reads and
-Zipfian distribution on node degree, we propose caching. We run LinkBench's
-workloads using three different caching algorithms: LRU, ARC and one that we
-have designed. We compare them based on latencies, cache hit-ratios and number
-of inter-partition traversals for queries.
-
-The reminder of the paper is organized as follows. In section 2 we discuss related
-work. In section 3, we discuss implementation details of our novel caching algorithm
-(LCC) and the different distributed query processing models that our platform, called
-CTW, supports. Section 4 discusses some issues encountered while using LinkBench
-and the modifications we made to it. In section 5 we compare the different caching
-algorithms. Finally, in section 6 we discuss future work for our platform and
-conclude in section 7.
+With the advent of Web 2.0 online collaboration has become not only a part of internet experience but rather a necessity. People today are not just passive viewers of the online content but rather active contributors. Social networking sites such as Facebook and Linkedin allow users to create both, their personal and professional identities respectively. Further, online communities such as blogs and Wikis allow people to express opinions, carry out discussions, ask questions and answer queries, among other things. In addition, media sharing and hosting websites such as YouTube ensure fast propagation and easy accessibility of digital content. Clearly, digital collaborations have revolutionized the way information is generated (i.e. through multiple sources), stored (social graphs and complex data types) and accessed (fast and ubiquitous) using just a web browser. In this paper we will particularly focus on collaborations between software developers, “Social Coding” and Open Source Software development. We will discuss how these collaborations function by analysing one of the most popular social coding website -GitHub. We would then conduct a study to assess various factors which govern the dynamics of such kind of collaborations.
+Recently, platforms such as SourceForge, GitHub, BitBucket, CodePlex have experienced a rise in popularity. These are also referred to as social coding platforms i.e. development environment that encourages formal and informal collaboration on software projects providing opportunities for discussion and sharing. Open source software in particular has experienced a rise in popularity. These open source projects are licensed to be freely modified and distributed and hence are often developed publically where multiple developers collaborate to add or modify functionality and remove bugs. This new style of development is driven by a rather different set of factors than traditional development. A study conducted by John et al [1] shows that Open source development follows a very modular approach where emphasis is on implementation. Unlike in traditional software development where a requirement specification document specifies design and approach, in Open source, design is a secondary concern which is consistently shaped throughout the development lifecycle via discussions (blogs) and mailing lists and is rather a byproduct of the source code. In addition to this there is also a difference how developers interact on social coding platforms. One of the most important characteristic of OSS development is voluntary contribution [2] without monetary incentives . While proprietary software is a subject to investment and returns, open source communities encourage transparency [3] , collaboration and sharing of ideas. From an economic standpoint, generation of original work takes time and effort in OSS but is compensated in low distribution cost which are almost negligible [4] . Most importantly, open source embraces creative freedom, collaboration, voluntary participation and encourages derivative works at minimal or zero access costs. Moreover, these collaborative platforms do not follow a traditional organizational hierarchy. Rather, the social graph structure of these projects introduces several different factors which guide and shape these collaborations. For example, a studies [4] [5] show that reputation of OSS developers plays an important role in attracting contributors to their projects. This is because, in such a setting where there is absence of personal knowledge about other developers for example their educational and professional qualifications, the only way to network with the right people is to indirectly assess them through their online reputation. This social aspect of OSS development provides insight into dynamics of collaborations and open interesting opportunities for research. Several studies throw light on what drives people towards OSS. Some of these factors include personal need for software [], creative stimulation [], learning [], gift-giving intentions [] and significant returns on contribution []. 
