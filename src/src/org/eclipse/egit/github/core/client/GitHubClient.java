@@ -425,7 +425,8 @@ public class GitHubClient {
 				stream, CHARSET_UTF8), bufferSize);
 		if (listType == null)
 			try {
-				return gson.fromJson(reader, type);
+				JsonReader jsonReader = new JsonReader(reader);
+				return gson.fromJson(jsonReader, type);
 			} catch (JsonParseException jpe) {
 				IOException ioe = new IOException(
 						"Parse exception converting JSON to object"); //$NON-NLS-1$

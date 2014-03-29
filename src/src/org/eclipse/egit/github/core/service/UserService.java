@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.eclipse.egit.github.core.Key;
 import org.eclipse.egit.github.core.User;
+import org.eclipse.egit.github.core.SearchUser;
 import org.eclipse.egit.github.core.client.GitHubClient;
 import org.eclipse.egit.github.core.client.GitHubRequest;
 import org.eclipse.egit.github.core.client.PageIterator;
@@ -545,6 +546,16 @@ public class UserService extends GitHubService {
 		request.setUri(SEGMENT_USERS);
 		request.setParams(filterData);
 		request.setType(new TypeToken<List<User>>() {}.getType());
+		return createPageIterator(request);
+	}
+
+	public PageIterator<SearchUser> popularUsers()
+	{
+		PagedRequest<SearchUser> request = createPagedRequest(0, PAGE_SIZE);
+		request.setUri("https://api.github.com/search/users?q=followers:>100");
+		//request.setParams(filterData);
+		//request.setType(new TypeToken<List<User>>() {}.getType());
+		request.setType(new TypeToken<SearchUser>() {}.getType());
 		return createPageIterator(request);
 	}
 }

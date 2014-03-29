@@ -18,7 +18,7 @@ import org.eclipse.egit.github.core.service.UserService;
 
 public class UpdateUsers implements Runnable
 {
-	private final String UPD_USER_STR = "UPDATE gh_users SET url = ?, public_repos = ?, name = ?, company = ?, location = ?, followers = ?, following = ?, created_at = ? WHERE id = ? LIMIT 1";
+	private final String UPD_USER_STR = "UPDATE gh_users SET url = ?, public_repos = ?, name = ?, company = ?, location = ?, followers = ?, following = ?, created_at = ? WHERE login = ? LIMIT 1";
 	private final String NXT_USER_STR = "SELECT id, login, type FROM gh_users WHERE followers IS NULL LIMIT ?";
 	private final String DEL_USER_STR = "DELETE FROM gh_users WHERE id = ? LIMIT 1";
 	private final DBConnector m_cons;
@@ -60,7 +60,7 @@ public class UpdateUsers implements Runnable
 					st.setInt(6, u2.getFollowers());
 					st.setInt(7, u2.getFollowing());
 					st.setDate(8, new java.sql.Date(u2.getCreatedAt().getTime()));
-					st.setInt(9, u2.getId());
+					st.setString(9, u2.getLogin());
 					st.executeUpdate();
 				}
 			
