@@ -18,6 +18,7 @@ import org.eclipse.egit.github.core.client.NoSuchPageException;
 import org.eclipse.egit.github.core.client.PageIterator;
 import org.eclipse.egit.github.core.client.RequestException;
 import org.eclipse.egit.github.core.service.UserService;
+//import org.eclipse.egit.github.core.SearchUser;
 import org.eclipse.egit.github.core.User;
 
 public class InsertUsers implements Runnable
@@ -37,8 +38,10 @@ public class InsertUsers implements Runnable
 		DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		Map<String, String> map = new HashMap<String, String>();
 		PageIterator<User> iterator = null;
+//		PageIterator<SearchUser> iterator = null;
 		PreparedStatement st = null;
 		List<User> users;
+//		List<SearchUser> users;
 
 		UserService uservice;
 		int maxUser;
@@ -53,11 +56,13 @@ public class InsertUsers implements Runnable
 
 			uservice = new UserService(this.m_cons.getGHClient(con));
 			iterator = uservice.pageUsers(map);
+//			iterator = uservice.popularUsers();
 
 			while (iterator.hasNext())
 			{
 				date = new Date();
 				users = new ArrayList<User>();
+//				users = new ArrayList<SearchUser>();
 				users.addAll(iterator.next());
 				
 				System.out.print(users.size() + " users to insert ");
@@ -76,6 +81,22 @@ public class InsertUsers implements Runnable
 						st.executeUpdate();
 					}
 				}
+
+//				for(SearchUser oo : users)
+//				{
+//					for(User u2 : oo.items)
+//					{
+//						if(this.UserExists(con, u2.getId()))
+//							continue;
+//						else
+//						{
+//							st.setInt(1, u2.getId());
+//							st.setString(2, u2.getLogin());
+//							st.setString(3, u2.getType());
+//							st.executeUpdate();
+//						}
+//					}
+//				}
 			}
 		}
 		catch (SQLException | InterruptedException | NoSuchPageException ex)
