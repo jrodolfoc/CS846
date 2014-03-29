@@ -1,0 +1,38 @@
+
+\section{Future Work}
+
+% Query passing model
+Due to the poor cache performance of using a query coordinator model, and the
+explanation for its poor performance, the next steps would be to look at
+implementing the second approach that we proposed where the query is passed on
+to further be processed by other hosts. This will allow queries to take
+advantage of another machine's cache. In the coordinator model, the number of
+remote calls we do only depends on the starting machine's cache. The reason we
+initially began with a coordinator model for this paper was for ease of
+implementation. We attempted a naive version of the query passing model, but it
+did not perform well due to CPU usage.
+
+% Relaxing assumptions:
+% - read only
+% - no history
+We made simplifying assumptions to allow us to focus on the caching
+implementation. In the future, the assumptions need to be relaxed. We assumed a
+read only workload, allowing us to postpone investigating isolation and cache
+invalidation. Secondly, we do not consider a client requesting further history
+after the first 100 vertices.
+
+We also wish to extend the LCC algorithm and try different scoring functions. We
+initially tried to assign a score to a vertex based on how well it was connected to
+other vertices already in cache. The intuition behind this algorithm is that vertices
+that are well connected amongst each other will usually be accessed together, so
+it will be convenient to keep them together in cache. The difficulty from this scoring
+function arises from the fact that scores need to be updated every time a vertex
+enters or leaves the cache, possibly modifying all elements on cache. We have
+several optimizations in mind but we leave them for future versions.
+
+For random walk, we need to test with different and varying depths to better
+assess the quality of each cache.
+
+Finally, as stated before, we believe that results can be extended to other datasets
+under different workloads. We plan to evaluate our caching algorithms under
+different datasets, like Orkut or RDF data.
