@@ -1,0 +1,122 @@
+
+\section{Results}
+
+\begin{table}
+\centering
+\begin{tabular}{ | l | c | }
+	\hline
+	Vertices & 1,000,000 \\ \hline
+	Edges & 8,700,950 \\ \hline
+	Partitions & 8 \\ \hline
+	\# client requests & 100,000 \\ \hline
+	\# clients & 8 \\ \hline
+	\# threads/client & 10 \\ \hline
+\end{tabular}
+\caption{Configuration used for our evaluations}
+\label{tbl:graphconfig}
+\end{table}
+
+The configuration for our evaluations can be seen on
+Table~\ref{tbl:graphconfig}. For our evaluations, we make the following
+assumptions:
+\begin{itemize}[topsep=0pt]
+	\item Read-Only workload
+	\item All vertices are of the same size
+	\item Edges do not occupy space in cache
+	\item Cache size is measured by the number of vertices
+\end{itemize}
+
+Note that all assumptions can be relaxed. They are issues that we intend to
+address on future versions of the platform. We compared three caching
+algorithms: LRU, ARC and LCC. We ran tests on each algorithm while varying the
+cache size on each partition to the following settings (size given by number of
+vertices): 1,000 (0.1\% of the total graph size), 2,500 (0.25\%), 5,000 (0.5\%),
+10,000 (1\%) and 25,000 (2.5\%). We then measured the following metrics that
+allowed us to compare amongst algorithms: Hit-ratios, average number of
+partitions traversed while answering a query and latencies. The following
+sections discuss the 2NR queries, that we extensively tested.
+
+We also ran extensive tests for the 2RW query. Caching provided us with up to
+$\sim$ 33\% improved response time. However, due to the small set of data
+touched by 2RW per request, all of the caches that we tested with, and all of
+the sizes per cache, saw uniform results. As such, we omit them from this paper.
+
+\subsection{Cache Hit-Ratios}
+\begin{figure*}[t]
+	\includegraphics[keepaspectratio, width=\textwidth]
+	{./img/btnCacheHits.png}
+\caption{Comparison of hit-ratios, between the three algorithms,
+as cache size increases on the 2NR Query. The graphs are ARC, LRU, LCC, from
+left to right.}
+\label{fig:hitratios}
+\end{figure*}
+
+We start by comparing hit-ratios amongst the different caching algorithms.
+Figure \ref{fig:hitratios} shows the results for the different algorithms. As
+expected, all caches improve on hit-ratios as the size of the cache grows. It
+is not a real surprise to see LCC under perform compared to others (refer to
+section \ref{sec:lccfailure} for more details). ARC has the best hit-ratio, but
+by a very little margin.
+
+\subsection{Number of partitions}
+\begin{figure}
+	\includegraphics[keepaspectratio, width=0.4\textheight]
+	{./img/btnRemotePartitionsVisited.png}
+\caption{Comparison of the average number of remote partitions that
+needed to be accessed in order to satisfy a request from a client.}
+\label{fig:partitions}
+\end{figure}
+
+Next, we compare the average number of partitions that an individual
+query needed to access in order to fully satisfy a request. Figure
+\ref{fig:partitions} shows this results. We can see how the average of
+partitions directly correlates with hit-ratios. This is because the more
+vertices you can find in cache, the less networks calls need to be made.
+These results show once again that ARC is performing the best. They also
+show some of the gains of caching, especially when compared to no
+cache.
+
+\subsection{Latencies}
+\begin{figure*}
+	\begin{center}
+	\includegraphics[keepaspectratio, width=0.8\textwidth]
+	{./img/btnClientResponseTime.png}
+	\end{center}
+\caption{Comparison of latencies, as measured by the client, of the
+different caching algorithms for the 3NR Query. The latency for LRU at 1000
+vertices was an anomaly due to server usage.}
+\label{fig:latencies}
+\end{figure*}
+
+Finally, we compare latencies as measured by the client. Figure \ref{fig:latencies}
+shows the results for latencies. Caching algorithms clearly have an advantage
+over no cache, improving performance by up to $\sim$ 25\%. Considerable gains in
+latency were not seen until the cache size reached 10000 vertices, since on
+average one query would have a result set of 500 vertices.
+
+\subsection{Reasons for LCC's failure}
+\label{sec:lccfailure}
+When using a single source query coordinator (refer to section
+\ref{sec:singlesourcequerycoord}), we see poorer performance when compared to
+the other caching strategies. This is because vertices that are two machine hops
+away from the start vertex are less likely to be incident to an edge on the
+start vertex's local machine.
+\footnote{
+	Let $N(v)$ be the neighbours of $v$. Assume $v$ is on partition $P_1$. Let
+	$S = |N(v) \cap P_3|$. Then, $P(S \geq x | u \in N(v) \cap P_2) \leq P(S \geq
+	x)$ for $x \in \mathbb{N}$, when $P_2 \cap P_3 = \emptyset$.
+}
+As a result, these vertices are more likely to be
+evicted from the cache because they have a lower score. This means that the
+vertices that are two hops away are very short lived. Consider also the fact
+that 1-hop vertices will usually be a small portion of the result set.
+
+However, we believe LCC will yield good results with query models that
+make use of intermediate caches (refer to state sharing coordinators,
+sections \ref{sec:statepassingquerycoord} and~\ref{sec:distributedstatequerycoord}).
+
+Some optimizations made to LCC involve the creation of LRU levels when they
+are about to be used for the first time. A level is destroyed when it becomes
+empty. On the negative side, we expected LCC to produce bigger latencies than
+other caching policies since it requires an extra call to database in order to
+provide a score to a remote vertex. We will be looking on ways to improve this.

@@ -1,0 +1,70 @@
+\documentclass{acm_proc_article-sp}
+
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\DeclareCaptionType{copyrightbox}
+
+\usepackage{tikz}
+\usetikzlibrary{backgrounds, fit, shapes}
+
+\usepackage{hyperref}
+\hypersetup
+{
+	colorlinks=true,
+}
+
+\makeatletter
+\let\@copyrightspace\relax
+\makeatother
+
+\begin{document}
+
+\title{Follow the Code Leader}
+\numberofauthors{2}
+\author{
+\alignauthor
+Jose Calvo-Villagran\email{jcalvovi@uwaterloo.ca}
+\and
+\alignauthor
+Madhur Kukreti\email{mkukreti@uwaterloo.ca}
+}
+
+\maketitle
+
+\begin{abstract}
+Large graph databases require sharding across multiple machines for scalability
+reasons. However, this introduces a higher latency when traversing edges that
+cross multiple machines. In this paper, we analyze the effect of different caching
+strategies for sharded graph databases. We implemented a distributed graph
+database on top of MySQL, and three different caching algorithms: LRU, ARC and
+an algorithm of our own, LCC.
+
+We evaluate our platform and our caching algorithms by using Facebook's LinkBench.
+LinkBench is a synthetic data and workload generator that simulates data layouts and
+access patterns that closely resemble those observed by Facebook. We finally show
+that ARC constantly out-performs other algorithms.
+
+\end{abstract}
+
+% A category with the (minimum) three required fields
+\category{K.4.3}{Organizational Impacts}{Computer-supported collaborative work}
+%A category including the fourth, optional field follows...
+\category{D.2.9}{Management}{Programming Teams}
+
+\terms{Human Factors, Contributors, Open Source}
+
+\keywords{Repositories, Social Networking, Software Engineering} % NOT required for Proceedings
+
+\input{./tex/intro.tex}
+\input{./tex/related_work.tex}
+\input{./tex/implementation.tex}
+\input{./tex/data-and-workload.tex}
+\input{./tex/results.tex}
+\input{./tex/future_work.tex}
+\input{./tex/conclusions.tex}
+
+\bibliographystyle{plain}
+\bibliography{paper}
+\end{document}
