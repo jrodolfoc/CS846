@@ -1,0 +1,55 @@
+
+\section{Introduction}
+
+Storing, managing and analyzing large graphs is critical to a variety of applications.
+These can vary from biological networks and DNA sequencing to communication
+and social networks~\cite{Mondal12}~\cite{Yang12}. As the size of these graphs
+continue to grow, databases need to partition data and distribute load in order to
+improve response times and throughput. As noted by SPAR~\cite{Pujol12}, this
+problem becomes especially challenging with social networks, as the highly
+skewed nature of the data can cause load imbalance across different partitions.
+
+We wish to explore different caching algorithms as a form of replication that adapts
+to changing workloads. We also wish to exploit the underlying structure of the data
+and come up with better and smarter ways to replicate graph databases. This will yield
+different result from SPAR~\cite{Pujol12} and TAO~\cite{Bronson13}, since we will be
+able to answer k-hop queries. We also note that, unlike Pregel~\cite{Malewicz10}
+based systems, we believe cache can also work under OLTP workloads.
+
+Because of the challenges that social networks pose, we focused our evaluations on
+them. We used Facebook's LinkBench \cite{Armstrong13}, a database benchmark
+used internally on Facebook and released recently as an open source project, as a
+data and workload generator. LinkBench reveals that Facebook's data is represented
+as a graph where nodes are people, status updates, photos, etc. The edges are
+relationships to those objects like posting, liking, sharing or friendship relationships,
+to name a few. They also report that all their queries can be evaluated in one hop.
+There are only two ways this is possible given the structure of their graph.
+
+The first method involves the creation of edges for all two hop relationships. For
+example, a person has an edge to all her friends' photos, thus obtaining all her
+friends' photos in a single hop. This does not scale for people who have large
+degree, a common scenario under power law graphs like social networks. When
+a person with large degree posts a photo, an edge will have to be formed for each
+friend or follower of the person to the photo.
+
+The second method is to determine a person's friends' photos in two phases. One
+call determines all of a person's friends. In the second phase a batch of calls
+are made for the person's friends' photos. This is bad for the calling
+application layer because it needs to make two round trips to the persistent
+storage layer. Additionally, the second round trip is a batch of parallel calls.
+
+As a result of the limitations of the two above methods, we propose not limiting
+an online social network to 1-hop queries, and allow k-hop queries. To take
+advantage of the read heavy workload, Zipfian distribution on node reads and
+Zipfian distribution on node degree, we propose caching. We run LinkBench's
+workloads using three different caching algorithms: LRU, ARC and one that we
+have designed. We compare them based on latencies, cache hit-ratios and number
+of inter-partition traversals for queries.
+
+The reminder of the paper is organized as follows. In section 2 we discuss related
+work. In section 3, we discuss implementation details of our novel caching algorithm
+(LCC) and the different distributed query processing models that our platform, called
+CTW, supports. Section 4 discusses some issues encountered while using LinkBench
+and the modifications we made to it. In section 5 we compare the different caching
+algorithms. Finally, in section 6 we discuss future work for our platform and
+conclude in section 7.

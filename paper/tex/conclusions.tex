@@ -1,0 +1,20 @@
+
+\section{Conclusions}
+
+Scaling graph databases can be challenging, especially when dealing with highly
+interconnected graphs.  We explored different, well-known caching algorithms
+that allowed us to replicate data across partitions based on Zipfian read
+workloads.  We also introduced a novel caching algorithm, Local Connected Cache
+(LCC), as a way to exploit the underlying nature of graph data. LCC is a
+multi-level LRU caching algorithm that assigns scores to vertices based on how
+well connected they are to other local vertices on a given partition.
+
+Although this algorithm highly favors immediate (1-hop) neighbours, we
+showed that it does not perform well for k-hop neighbours and that is highly
+dependent on the query access model that the underlying database implements.
+We believe LCC will improve performance significantly if allowed to work with
+intermediate caches, a direction we wish to pursue on future versions of the
+platform.
+
+We then compared two other caching algorithms, LRU and ARC, and showed
+that ARC provides better performance in all three metrics that we collected.
