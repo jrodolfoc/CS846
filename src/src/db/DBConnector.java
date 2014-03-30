@@ -100,7 +100,7 @@ public class DBConnector
 		{
 			st = conn.prepareStatement(UPD_CWL_VARS);
 			
-			if(val instanceof Integer)
+			if(val instanceof Long)
 			{
 				st.setLong(1, (long) val);
 				st.setNull(2, java.sql.Types.CHAR);

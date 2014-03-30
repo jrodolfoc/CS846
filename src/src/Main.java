@@ -33,7 +33,7 @@ public class Main
 //			tri = new Thread(new InsertRepos(dbc));
 //			tri.start();
 			
-			tru = new Thread(new UpdateRepos(dbc, true, true));
+			tru = new Thread(new UpdateRepos(dbc, false));
 			tru.start();
 			
 			while (

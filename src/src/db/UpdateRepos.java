@@ -23,10 +23,9 @@ public class UpdateRepos implements Runnable
 {
 	private final DBConnector m_cons;
 	private final boolean justUpdating;
-	private final boolean isMac;
 
 	//REPO TABLE
-	private final String NXT_RCOL_STR = "SELECT id, url FROM gh_repositories WHERE id > ? LIMIT ?";
+	private final String NXT_RCOL_STR = "SELECT id, url FROM top10k_repositories WHERE id > ? LIMIT ?";
 	private final String NXT_REPO_STR = "SELECT id, url FROM gh_repositories WHERE created_at IS NULL LIMIT ?";
 	private final String UPD_REPO_STR = "UPDATE gh_repositories SET created_at = ?, stargazers_count = ?, " +
 			"watchers_count = ?, language = ?, forks_count = ?, open_issues_count = ?, forks = ?, " +
@@ -39,11 +38,10 @@ public class UpdateRepos implements Runnable
 	private final String INS_CONTR_STR = "INSERT IGNORE INTO gh_repos_star (repo_id, user_id) VALUES (?, ?)";
 	private final String INS_SUBSC_STR = "INSERT IGNORE INTO gh_repos_subscribers (repo_id, user_id) VALUES (?, ?)";
 
-	public UpdateRepos(DBConnector _m_cons, boolean updating, boolean mac)
+	public UpdateRepos(DBConnector _m_cons, boolean updating)
 	{
 		this.m_cons = _m_cons;
 		this.justUpdating = updating;
-		this.isMac = mac;
 	}
 
 	private void completeRepos() throws SQLException, InterruptedException, IOException
@@ -194,53 +192,48 @@ public class UpdateRepos implements Runnable
 					lastId = Long.parseLong(u[0]);
 					RepositoryId repId = new RepositoryId(u[1], u[2]);
 
-					if(this.isMac)
+					//Contributors
+					u2 = uservice.getContributors(repId, false);
+					contrib = u2.size();
+
+					for(Contributor c0nt : u2)
 					{
-						//Contributors
-						u2 = uservice.getContributors(repId, false);
-						contrib = u2.size();
-	
-						for(Contributor c0nt : u2)
-						{
-							stContrib.setLong(1, lastId);
-							stContrib.setInt(2, c0nt.getId());
-							stContrib.executeUpdate();
-						}
-	
-						//Collaborators
-						u2 = uservice.getCollaborators(repId, false);
-						collab = u2.size();
-	
-						for(Contributor c0nt : u2)
-						{
-							stCollab.setLong(1, lastId);
-							stCollab.setInt(2, c0nt.getId());
-							stCollab.executeUpdate();
-						}
+						stContrib.setLong(1, lastId);
+						stContrib.setInt(2, c0nt.getId());
+						stContrib.executeUpdate();
 					}
-					else
+
+					//Collaborators
+					u2 = uservice.getCollaborators(repId, false);
+					collab = u2.size();
+
+					for(Contributor c0nt : u2)
 					{
-						//Stargazers
-						u2 = uservice.getStargazers(repId, false);
-						starg = u2.size();
-	
-						for(Contributor c0nt : u2)
-						{
-							stStarg.setLong(1, lastId);
-							stStarg.setInt(2, c0nt.getId());
-							stStarg.executeUpdate();
-						}
-	
-						//Subscribers
-						u2 = uservice.getContributors(repId, false);
-						subscrib = u2.size();
-	
-						for(Contributor c0nt : u2)
-						{
-							stSubscrib.setLong(1, lastId);
-							stSubscrib.setInt(2, c0nt.getId());
-							stSubscrib.executeUpdate();
-						}
+						stCollab.setLong(1, lastId);
+						stCollab.setInt(2, c0nt.getId());
+						stCollab.executeUpdate();
+					}
+				
+					//Stargazers
+					u2 = uservice.getStargazers(repId, false);
+					starg = u2.size();
+
+					for(Contributor c0nt : u2)
+					{
+						stStarg.setLong(1, lastId);
+						stStarg.setInt(2, c0nt.getId());
+						stStarg.executeUpdate();
+					}
+
+					//Subscribers
+					u2 = uservice.getContributors(repId, false);
+					subscrib = u2.size();
+
+					for(Contributor c0nt : u2)
+					{
+						stSubscrib.setLong(1, lastId);
+						stSubscrib.setInt(2, c0nt.getId());
+						stSubscrib.executeUpdate();
 					}
 
 					this.m_cons.UpdateCrawlerIntVar(conn, "lastrepo", lastId);
