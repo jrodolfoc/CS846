@@ -23,16 +23,16 @@ insert ignore into users_x_repos(uid, rid) (select user_id, repo_id from gh_repo
 insert ignore into users_x_repos(uid, rid) (select user_id, repo_id from gh_repos_star);
 
 #Top 100 users
-select count(distinct u.id) as Total from users_x_repos x join top100users u ON u.id = x.uid join top100repos r on r.id = x.rid;
-select count(distinct u.id) as Total from users_x_repos x join top100users u ON u.id = x.uid join top1krepos r on r.id = x.rid;
-select count(distinct u.id) as Total from users_x_repos x join top100users u ON u.id = x.uid join top10krepos r on r.id = x.rid;
+select count(distinct x.rid) as Total from users_x_repos x join top100users u ON u.id = x.uid join top100repos r on r.id = x.rid;
+select count(distinct x.rid) as Total from users_x_repos x join top100users u ON u.id = x.uid join top1krepos r on r.id = x.rid;
+select count(distinct x.rid) as Total from users_x_repos x join top100users u ON u.id = x.uid join top10krepos r on r.id = x.rid;
 
 #Top 1k users
-select count(distinct u.id) as Total from users_x_repos x join top1kusers u ON u.id = x.uid join top100repos r on r.id = x.rid;
-select count(distinct u.id) as Total from users_x_repos x join top1kusers u ON u.id = x.uid join top1krepos r on r.id = x.rid;
-select count(distinct u.id) as Total from users_x_repos x join top1kusers u ON u.id = x.uid join top10krepos r on r.id = x.rid;
+select count(distinct x.rid) as Total from users_x_repos x join top1kusers u ON u.id = x.uid join top100repos r on r.id = x.rid;
+select count(distinct x.rid) as Total from users_x_repos x join top1kusers u ON u.id = x.uid join top1krepos r on r.id = x.rid;
+select count(distinct x.rid) as Total from users_x_repos x join top1kusers u ON u.id = x.uid join top10krepos r on r.id = x.rid;
 
 #Top 10k users
-select count(distinct u.id) as Total from users_x_repos x join top10kusers u ON u.id = x.uid join top100repos r on r.id = x.rid;
-select count(distinct u.id) as Total from users_x_repos x join top10kusers u ON u.id = x.uid join top1krepos r on r.id = x.rid;
-select count(distinct u.id) as Total from users_x_repos x join top10kusers u ON u.id = x.uid join top10krepos r on r.id = x.rid;
+select count(distinct x.rid) as Total from users_x_repos x join top10kusers u ON u.id = x.uid join top100repos r on r.id = x.rid;
+select count(distinct x.rid) as Total from users_x_repos x join top10kusers u ON u.id = x.uid join top1krepos r on r.id = x.rid;
+select count(distinct x.rid) as Total from users_x_repos x join top10kusers u ON u.id = x.uid join top10krepos r on r.id = x.rid;

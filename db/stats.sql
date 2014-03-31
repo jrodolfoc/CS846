@@ -32,5 +32,5 @@ select count(*) from gh_users where following is null;
 select * from gh_users where following is null;
 
 #CONTRIBUTORS
-SELECT count(distinct user_id) FROM gh_repos_subscribers;
-#6,365 6.37pm
+SELECT count(distinct repo_id) FROM gh_repos_subscribers;
+#1,658 11.20am

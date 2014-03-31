@@ -163,7 +163,7 @@ public class DBConnector
 				token = CrawlerStrVar(conn, "ubu8auth");
 				break;
 			case 9:
-				TimeUnit.MINUTES.sleep(10L);
+				TimeUnit.MINUTES.sleep(40L);
 				break;
 			}
 		}
