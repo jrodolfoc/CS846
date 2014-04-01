@@ -21,20 +21,20 @@
 \label{tbl:owner}
 \end{table}
 \label{sec:results}
+
+To answer Q2, we formulated four hypothesis in an attempt to characterize the motivations behind developers following a project. The hypothesis are: (i) popularity grows because the owner of the project is popular; (ii) popularity grows because the number of popular contributors working on it; (iii) popularity is affected by the programming language; (iv) popularity is determined by the category that it belongs to. We now present the results obtained for each of the four hypothesis:
+
+\subsection{Owner}
+
+The owner of the project is the user who originally created and published it on GitHub. We hypothesize that the popularity of the owner influences the popularity of the project he/she owns. A relation was made between the number of stars of the project and the number of followers of the owner. We started by analyzing the behaviour of the 100 most popular projects and their owners, hoping to find a positive correlation. Table \ref{tbl:owner} shows no concrete evidence about the 10 most popular projects. We could not find information about some of the owners in our database (rows 3 and 8), thus we can only affirm that they are not between the 1,000 most popular users (see Section \ref{sec:collection} for details).
+
+A more general case is shown in Figure \ref{fig:owner}. It can be seen that a large number of popular projects have owners with little following. Finally, for the complete set of projects included in our sample, the correlation between owners and projects is 0.01, using Pearson's correlation coefficient. Therefore, we conclude that there is no correlation at all between stars and followers.
 \begin{figure}
 	\centering
 	\includegraphics[width=0.45\textwidth]{./img/top100Owner.png}
 	\caption{Relation between popularity of the project (given by stars) and the popularity of the project's owner (given by followers).}
 	\label{fig:owner}
 \end{figure}
-
-To answer Q2, we chose to measure the popularity of a project based on the number of stars it has. Stars in GitHub, as explained before, is a bookmarking functionality that creates awereness on users, as it notifies them on recent developments happening to the project. Other metric considered was the number of contributors working on the project, but this was soon dismissed because it usually is a much lower number than stars and is limited to the users who made code modifications. Also, the API counts a contributor as someone who has also starred the project, so for all projects, the set of contributors is included into the set of stars. We now discuss the 4 main hypothesis that we worked on and their results:
-
-\subsection{Owner}
-
-The owner of the project is the user who originally created and published it on GitHub. We hypothesize that the popularity of the owner influences the popularity of the project he/she owns. A relation was made between the number of stars of the project and the number of followers of the owner. We started by analyzing the behaviour of the 100 most popular projects and their owners, hoping to find a positive correlation. Table \ref{tbl:owner} shows no concrete evidence about the 10 most popular projects. We could not find information about some of the owners in our database (rows 3 and 8), thus we can only confirm that they are not between the 1,000 most popular users (see Section \ref{sec:collection} for details).
-
-A more general case is shown in Figure \ref{fig:owner}. It can be seen that a large number of popular projects have owners with little following. Finally, for the complete set of projects included in our sample, the correlation between owners and projects is 0.01, using Pearson's correlation coefficient. Therefore, we conclude that there is no correlation at all between stars and followers.
 
 \subsection{Contributors}
 
@@ -60,7 +60,7 @@ The programming language of a project can be a difficult choice for the owner. T
 
 The results are given in Table \ref{tbl:languages}. The total number of projects is given by P. F/P is the average number of followers per language and F > {$ \tau $} is the number of projects that have more than {$ \tau $} ({$ \tau $} = 2,500) followers. The last column is the language success rate. Several observations can be made. First, the two languages with the most projects (Javascript and Ruby) are also the ones that have the most projects above the {$ \tau $} threshold. Julia has a 50\% success rate, but its sample size is too little to make a reasonable generalization. Finally, the languages with a high average on followers are CSS, Rust, Julia and TypeScript, which are also the ones that have the highest success rate.
 
-The correlation within the number of projects and the success rate is of 0.53, when the ``None'' language is removed. If we consider the ``None'' language, this correlation falls to 0.27. This tells us that there is some correlation between the most popular programming languages and the most popular projects. The only problem is that the success rates are so low, or the sample size is so little (the case of Julia and Rust) that no positive conclusion can be made about the programming languages. So we also dismiss this hypothesis.
+The correlation within the number of projects and the success rate is of 0.53, when the ``None'' language is removed. If we consider the ``None'' language, this correlation falls to 0.27. This tells us that there is some correlation between the most popular programming languages and the amount of projects that the language will have above the threshold {$ \tau $}. The only problem is that the success rates are so low or, in the case of Julia, the sample size is so little, that no positive conclusion can be made about the programming languages. So we also dismiss this hypothesis.
 \begin{table}
 \centering
 \begin{tabular}{ | l | c | c | c | c | }
@@ -92,7 +92,7 @@ The correlation within the number of projects and the success rate is of 0.53, w
 \subsection{Categories}
 Our final hypothesis involves the categorization of projects. We claim that developers follow a project based on its intended usage. So, for example, 3D rendering software will usually have more followers than unit testing tools. We took the 100 most popular projects and visited their websites and repositories in order to find what their functionality is. We then assigned a broad category which we thought best described the project. The results are shown in Figure \ref{fig:categories}. We included the programming language as well, in order to better understand the distribution of the projects.
 
-The most common categories are framework and widget/plugin. Examples of frameworks are JQuery and Symphony. Examples of widgets/plugins are FileUploader and JavaScript PDF reader. Also noteworthy to mention is that JavaScript frameworks and widget/plugins are, by far, the most common types of project found on this phase of the study. Other categories found were front-end generators, libraries and networking tools. We believe this shows a trend about what kind of projects are users interested in following. Ir certainly shows the best results out of the four hypothesis we made. But, because the sample size is so small, we cannot generalize these results.
+The most common categories are framework and widget / plugin. Examples of frameworks are JQuery and Symphony. Examples of widgets / plugins are FileUploader and JavaScript PDF reader. Also noteworthy to mention is that JavaScript frameworks and widgets / plugins are, by far, the most common types of project found on this phase of the study. Other categories found were front-end generators, libraries and networking tools. We believe this shows a trend about what kind of projects are users interested in following, i.e. web development productivity tools. This certainly shows the best results out of the four hypothesis we made. But, because the sample size is so small, we cannot generalize these results. In order to claim with some level of certainty that these categories correlate to the popularity of a project, we need to determine, out of all the frameworks hosted on GitHub, the percentage of successful ones. In other words, we suggest applying the same success rate metric we used for evaluating the programming languages.
 \begin{figure*}[ht]
 	\centering
 	\includegraphics[width=\textwidth]{./img/categories.png}
