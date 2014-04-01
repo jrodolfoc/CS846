@@ -1,21 +1,6 @@
 
 \section{Data Collection}
 \label{sec:collection}
-
-<<<<<<< HEAD
-We used GitHub API v3 \cite{GitHubAPI} to collect the data. The advantages of such API is that it provides a more structured and straightforward access to the data. The disadvantage is that it only allows 5,000 queries per hour per user. An alternative to the API would be to create our own web crawler/scraper, with the risk of our IP getting banned by GitHub. We eventually found a way to paralelize the data collection phase, with the use of several user accounts. We built a tool that, given an initial set of users, would recursively fetch his/her followers and repositories. For the initial set, we chose the one thousand most popular users, plus some chosen randomly. The same could not be done for the repositories. There is no unified criteria for selecting the most popular repositories: number of forks, number of contributors, number of watchers and so on. So, besides the ones that belong to the popular users, we included random sets of repositories, ordered by different criteria.
-\begin{table}
-\centering
-\begin{tabular}{ | l | c | }
-	\hline
-	Users & 618,353 \\ \hline
-	Repositories & 868,177 \\ \hline
-\end{tabular}
-\caption{Data collected from GitHub API v3}
-\label{tbl:datacollected}
-\end{table}
-
-The total amount of users and repositories collected from the API is given in Table \ref{tbl:datacollected}. Regarding Q2, Table \ref{tbl:topusers} provides an overview of the typical user in GitHub. For comparison purposes, we decided to group the data by the ranking of the user. This shows, for example, that the average number of followers between the Top 10 users is almost three times that of the Top 100 users. An interesting trend shown here is that the top users are also following a considerable amount of users, with the top 1K users following an average of 121 users, compared to the 2.8 followings that a regular user has.
 \begin{table}
 \centering
 \begin{tabular}{ | c | c | c | c | }
@@ -27,31 +12,46 @@ The total amount of users and repositories collected from the API is given in Ta
 	Top 10K & 45.8 & 147.7 & 49.2 \\ \hline
 	All & 5.1 & 4.1 & 2.8 \\ \hline
 \end{tabular}
-\caption{Average repositories, followers and followings of users in GitHub}
+\caption{Average repositories, followers and followings for GitHub users. Users are ordered by the number of followers. By Top 10 we mean the 10 most followed users. Same applies for Top 100, Top 1K and so on.}
 \label{tbl:topusers}
 \end{table}
-
-Finally, Table \ref{tbl:topcompanies} shows the companies 
 \begin{table}
 \centering
-\begin{tabular}{ | l | c | c | c | c | }
+\begin{tabular}{ | c | c | c | c | c | }
 	\hline
-	\- & \multicolumn{2}{|c|}{Top 10} & \multicolumn{2}{|c|}{Top 1K} \\ \hline
-	\multicolumn{1}{|c|}{Company} & Users & Followers & Users & Followers \\ \hline
-	GitHub & 4 & 47,976 & 41 & 81,685 \\ \hline
-	Google & 2 & 17,766 & 23 & 30,044 \\ \hline
-	Khan Academy & 1 & 6,674 & 1 & 6,674 \\ \hline
-	Linux Foundation & 1 & 15,913 & 1 & 15,913 \\ \hline
-	Segment.io & 1 & 8,033 & 3 & 8,841 \\ \hline
-	Basecamp & - & - & 4 & 7,880 \\ \hline
-	Heroku & - & - & 7 & 8,390 \\ \hline
-	Twitter & - & - & 11 & 7,701 \\ \hline
-	Others & - & - & 556 & 351,946 \\ \hline
-	Not Specified & 1 & 5,952 & 353 & 225,466 \\ \hline
+	Repos & Stars & Forks & Issues & Subscribers \\ \hline
+	Top 10 & 1 & 1 & 1 & 1 \\ \hline
+	Top 100 & 1 & 1 & 1 & 1 \\ \hline
+	Top 1K & 1 & 1 & 1 & 1 \\ \hline
+	Top 10K & 1 & 1 & 1 & 1 \\ \hline
+	All & 1 & 1 & 1 & 1 \\ \hline
 \end{tabular}
-\caption{Number of users that a company has between the Top 10 and Top 1K. It shows, for example, that 2 of the users in the top 10 are working for Google and they contribute }
+\caption{Average stars, forks, issues and subscribers for GitHub repositories. By Top 10 we mean the 10 repositories that have the biggest number of stars. Same applies to Top 100, Top 1K and so on.}
+\label{tbl:toprepos}
+\end{table}
+\begin{table}
+\centering
+\begin{tabular}{ | l | c | c | }
+	\hline
+	\multicolumn{1}{|c|}{Company} & Users in Top 10 & Users in Top 1K \\ \hline
+	GitHub & 4 & 41 \\ \hline
+	Google & 2 & 23 \\ \hline
+	Khan Academy & 1 & 1 \\ \hline
+	Linux Foundation & 1 & 1 \\ \hline
+	Segment.io & 1 & 3 \\ \hline
+	Basecamp & - & 4 \\ \hline
+	Heroku & - & 7 \\ \hline
+	Twitter & - & 11 \\ \hline
+	Others & - & 556 \\ \hline
+	Not Specified & 1 & 353 \\ \hline
+\end{tabular}
+\caption{Number of users that a company has between the Top 10 and Top 1K. It shows, for example, that 2 of the users working for Google are between the 10 most popular. This number grows to 23 when the 1K most popular users are considered.}
 \label{tbl:topcompanies}
 \end{table}
-=======
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eget purus in mi fringilla faucibus ut sit amet enim. Integer ac aliquam lacus. Sed semper luctus leo, a porttitor ligula. Praesent elementum placerat mi. Maecenas suscipit convallis justo, eget aliquam neque blandit vitae. Sed tincidunt dui nec metus sagittis, a semper nibh luctus. Pellentesque felis tortor, interdum sed congue sed, bibendum vitae eros. Suspendisse fringilla bibendum pretium. Vivamus at eros ac urna consectetur auctor.
->>>>>>> a21da72e60514db4c40d0fe0ffb3a6df2772a64e
+
+We used GitHub API v3 \cite{GitHubAPI} to collect the data. The advantages of such API is that it provides a more structured and straightforward access to the data. The disadvantage is that it only allows 5,000 queries per hour per user. An alternative to the API would be to create our own web crawler/scraper, with the risk of our IP getting banned by GitHub. We eventually found a way to paralelize the data collection phase, with the use of several user accounts. We built a tool that, given an initial set of users, would recursively fetch a random subset of his/her followers. For the initial set, we chose the one thousand most popular users, plus some chosen randomly. The same could not be done for the repositories. There is no unified criteria for selecting the most popular repositories: number of forks, number of contributors, number of watchers and so on. We ended up including a random set of repositories, ordered by different criteria.
+
+We collected information of 618,353 users in GitHub. Regarding Q1, Table \ref{tbl:topusers} provides an overview of the typical user in GitHub. For comparison purposes, we decided to group the data by the ranking of the user. This shows, for example, that the average number of followers between the 10 most popular users is almost three times that of the Top 100 users. An interesting trend shown here is that the top users are also following a considerable amount of users, with the top 1K users following an average of 121 users, compared to the 2.8 followings that the average user has. We also collected information of 868,177 repositories. The averages are shown in Table \ref{tbl:toprepos}.
+
+Finally, Table \ref{tbl:topcompanies} shows the companies that employ the most popular users in GitHub. It is interesting to note that the ten most popular users are mostly employed by well-known companies. It also shows that the number of independent users is considerable, with 35.3\% of the first 1,000 most popular users declaring themselves as working on their own or representing themselves.
+
