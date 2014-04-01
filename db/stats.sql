@@ -36,3 +36,5 @@ SELECT count(distinct repo_id) FROM gh_repos_subscribers;
 #1,658 11.20am
 #1,951 02.20pm
 #2,237 06.00pm
+
+#update cwl_vars set var_int_value = 280983 where description = 'lastrepo' limit 1;

@@ -27,17 +27,19 @@ select count(distinct x.rid) as Total from users_x_repos x join top100users u ON
 select count(distinct x.rid) as Total from users_x_repos x join top100users u ON u.id = x.uid join top1krepos r on r.id = x.rid;
 
 #Top 100 averages
-select AVG(cnt) FROM (select count(distinct x.uid) as cnt from users_x_repos x
-	join top100users u ON u.id = x.uid join top100repos r on r.id = x.rid group by rid) t;
-select AVG(cnt) FROM (select count(distinct x.uid) as cnt from users_x_repos x
-	join top100users u ON u.id = x.uid join top1krepos r on r.id = x.rid group by rid) t;
+select count(distinct x.uid) as Total from users_x_repos x join top100users u ON u.id = x.uid join top100repos r on r.id = x.rid;
+select count(distinct x.uid) as Total from users_x_repos x join top100users u ON u.id = x.uid join top1krepos r on r.id = x.rid;
 
 #Top 1k users
 select count(distinct x.rid) as Total from users_x_repos x join top1kusers u ON u.id = x.uid join top100repos r on r.id = x.rid;
 select count(distinct x.rid) as Total from users_x_repos x join top1kusers u ON u.id = x.uid join top1krepos r on r.id = x.rid;
 
 #Top 1k averages
-select AVG(cnt) FROM (select count(distinct x.uid) as cnt from users_x_repos x
-	join top1kusers u ON u.id = x.uid join top100repos r on r.id = x.rid group by rid) t;
-select AVG(cnt) FROM (select count(distinct x.uid) as cnt from users_x_repos x
-	join top1kusers u ON u.id = x.uid join top1krepos r on r.id = x.rid group by rid) t;
+select count(distinct x.uid) as Total from users_x_repos x join top1kusers u ON u.id = x.uid join top100repos r on r.id = x.rid;
+select count(distinct x.uid) as Total from users_x_repos x join top1kusers u ON u.id = x.uid join top1krepos r on r.id = x.rid;
+#select rid, count(distinct x.uid) as cnt from users_x_repos x
+#	join top1kusers u ON u.id = x.uid join top100repos r on r.id = x.rid group by rid;
+#select rid, count(distinct x.uid) as cnt from users_x_repos x
+#	join top1kusers u ON u.id = x.uid join top100repos r on r.id = x.rid group by rid;
+#select rid, count(distinct x.uid) as cnt from users_x_repos x
+#	left join top10kusers u ON u.id = x.uid join top10krepos r on r.id = x.rid group by rid;
